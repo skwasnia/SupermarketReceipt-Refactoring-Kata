@@ -42,22 +42,15 @@ class ShoppingCart:
             self._product_quantities[product] = quantity
 
     def _get_offers_factor(self, p, quantity, offer, unit_price, quantity_as_int):
-        x = 1
         discount = None
 
-        if offer.offer_type == SpecialOfferType.THREE_FOR_TWO:
-            x = 3
-
-        elif offer.offer_type == SpecialOfferType.TWO_FOR_AMOUNT:
-            x = 2
+        if offer.offer_type == SpecialOfferType.TWO_FOR_AMOUNT:
             if quantity_as_int >= 2:
-                total = offer.argument * (quantity_as_int / x) + quantity_as_int % 2 * unit_price
+                total = offer.argument * (quantity_as_int / 2) + quantity_as_int % 2 * unit_price
                 discount_n = unit_price * quantity - total
                 discount = Discount(p, "2 for " + str(offer.argument), -discount_n)
-        elif offer.offer_type == SpecialOfferType.FIVE_FOR_AMOUNT:
-            x = 5
 
-        return (x, discount)
+        return discount
 
     def handle_offers(self, receipt, offers, catalog):
         for p in self._product_quantities.keys(): # For each item
@@ -67,7 +60,7 @@ class ShoppingCart:
                 unit_price = catalog.unit_price(p)
                 quantity_as_int = int(quantity)
 
-                x, discount = self._get_offers_factor(p, quantity, offer, unit_price, quantity_as_int)
+                discount = self._get_offers_factor(p, quantity, offer, unit_price, quantity_as_int)
 
                 if offer.offer_type == SpecialOfferType.THREE_FOR_TWO and quantity_as_int > 2:
                     discount_amount = quantity * unit_price - (
@@ -81,7 +74,7 @@ class ShoppingCart:
                 if offer.offer_type == SpecialOfferType.FIVE_FOR_AMOUNT and quantity_as_int >= 5:
                     discount_total = unit_price * quantity - (
                                 offer.argument * math.floor(quantity_as_int / 5) + quantity_as_int % 5 * unit_price)
-                    discount = Discount(p, str(x) + " for " + str(offer.argument), -discount_total)
+                    discount = Discount(p, str(5) + " for " + str(offer.argument), -discount_total)
 
                 if discount:
                     receipt.add_discount(discount)
