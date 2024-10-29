@@ -33,17 +33,20 @@ class ReceiptPrinter:
         total_price_printed = self._print_price(item.total_price)
         name = item.product.name
         line = self._format_line_with_whitespace(name, total_price_printed)
+
         if item.quantity != 1:
             line += f"  {self._print_price(item.price)} * {self._print_quantity(item)}\n"
+
         return line
 
     def _format_line_with_whitespace(self, name, value):
-        line = name
         whitespace_size = self.columns - len(name) - len(value)
-        for i in range(whitespace_size):
-            line += " "
-        line += value
-        line += "\n"
+
+        if whitespace_size < 0:
+            whitespace_size = 0
+
+        line = f"{name}{' ' * whitespace_size}{value}\n"
+
         return line
 
     def _print_price(self, price):
