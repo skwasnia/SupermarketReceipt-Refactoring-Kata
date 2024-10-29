@@ -41,26 +41,11 @@ def read_offers(offers_file, teller):
             product = teller.product_with_name(name)
             teller.add_special_offer(offerType, product, argument)
 
-
-def read_basket(cart_file, catalog):
-    cart = ShoppingCart()
-    if not cart_file.exists():
-        return cart
-    with open(cart_file, "r") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            name = row['name']
-            quantity = float(row['quantity'])
-            product = catalog.products[name]
-            cart.add_item_quantity(product, quantity)
-    return cart
-
-
 def main(args):
     catalog = read_catalog(Path("catalog.csv"))
     teller = Teller(catalog)
     read_offers(Path("offers.csv"), teller)
-    basket = read_basket(Path("cart.csv"), catalog)
+    basket = ShoppingCart(Path("cart.csv"), catalog)
     receipt = teller.checks_out_articles_from(basket)
     print(ReceiptPrinter().get_receipt(receipt))
 

@@ -1,13 +1,27 @@
 import math
+import csv
 
 from model_objects import ProductQuantity, SpecialOfferType, Discount
 
 
 class ShoppingCart:
-
-    def __init__(self):
+    def __init__(self, cart_file=None, catalog=None):
         self._items = []
         self._product_quantities = {}
+
+        if not cart_file:
+            return
+
+        if not catalog:
+            return
+
+        with open(cart_file, "r") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                name = row['name']
+                quantity = float(row['quantity'])
+                product = catalog.products[name]
+                self.add_item_quantity(product, quantity)
 
     @property
     def items(self):
