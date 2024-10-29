@@ -69,11 +69,9 @@ class ShoppingCart:
 
                 x, discount = self._get_offers_factor(p, quantity, offer, unit_price, quantity_as_int)
 
-                number_of_x = math.floor(quantity_as_int / x)
-
                 if offer.offer_type == SpecialOfferType.THREE_FOR_TWO and quantity_as_int > 2:
                     discount_amount = quantity * unit_price - (
-                                (number_of_x * 2 * unit_price) + quantity_as_int % 3 * unit_price)
+                                (math.floor(quantity_as_int / 3) * 2 * unit_price) + quantity_as_int % 3 * unit_price)
                     discount = Discount(p, "3 for 2", -discount_amount)
 
                 if offer.offer_type == SpecialOfferType.TEN_PERCENT_DISCOUNT:
@@ -82,7 +80,7 @@ class ShoppingCart:
 
                 if offer.offer_type == SpecialOfferType.FIVE_FOR_AMOUNT and quantity_as_int >= 5:
                     discount_total = unit_price * quantity - (
-                                offer.argument * number_of_x + quantity_as_int % 5 * unit_price)
+                                offer.argument * math.floor(quantity_as_int / 5) + quantity_as_int % 5 * unit_price)
                     discount = Discount(p, str(x) + " for " + str(offer.argument), -discount_total)
 
                 if discount:
