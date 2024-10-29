@@ -5,7 +5,7 @@ class ReceiptPrinter:
     def __init__(self, columns=40):
         self.columns = columns
 
-    def print_receipt(self, receipt):
+    def get_receipt(self, receipt):
         return self._print_receipt_items(receipt) \
             + self._print_discounts(receipt) \
             + "\n" \
