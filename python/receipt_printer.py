@@ -6,18 +6,28 @@ class ReceiptPrinter:
         self.columns = columns
 
     def print_receipt(self, receipt):
+        return self._print_receipt_items(receipt) \
+            + self._print_discounts(receipt) \
+            + "\n" \
+            + self._present_total(receipt)
+
+    def _print_discounts(self, receipt):
         result = ""
-        for item in receipt.items:
-            receipt_item = self._print_receipt_item(item)
-            result += receipt_item
 
         for discount in receipt.discounts:
             discount_presentation = self._print_discount(discount)
             result += discount_presentation
 
-        result += "\n"
-        result += self._present_total(receipt)
-        return str(result)
+        return result
+
+    def _print_receipt_items(self, receipt):
+        result = ""
+
+        for item in receipt.items:
+            receipt_item = self._print_receipt_item(item)
+            result += receipt_item
+
+        return result
 
     def _print_receipt_item(self, item):
         total_price_printed = self._print_price(item.total_price)
