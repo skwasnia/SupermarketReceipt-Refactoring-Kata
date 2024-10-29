@@ -41,17 +41,6 @@ class ShoppingCart:
         else:
             self._product_quantities[product] = quantity
 
-    def _get_offers_factor(self, p, quantity, offer, unit_price, quantity_as_int):
-        discount = None
-
-        if offer.offer_type == SpecialOfferType.TWO_FOR_AMOUNT:
-            if quantity_as_int >= 2:
-                total = offer.argument * (quantity_as_int / 2) + quantity_as_int % 2 * unit_price
-                discount_n = unit_price * quantity - total
-                discount = Discount(p, "2 for " + str(offer.argument), -discount_n)
-
-        return discount
-
     def handle_offers(self, receipt, offers, catalog):
         for p in self._product_quantities.keys(): # For each item
             quantity = self._product_quantities[p]
@@ -60,7 +49,13 @@ class ShoppingCart:
                 unit_price = catalog.unit_price(p)
                 quantity_as_int = int(quantity)
 
-                discount = self._get_offers_factor(p, quantity, offer, unit_price, quantity_as_int)
+                discount = None
+
+                if offer.offer_type == SpecialOfferType.TWO_FOR_AMOUNT:
+                    if quantity_as_int >= 2:
+                        total = offer.argument * (quantity_as_int / 2) + quantity_as_int % 2 * unit_price
+                        discount_n = unit_price * quantity - total
+                        discount = Discount(p, "2 for " + str(offer.argument), -discount_n)
 
                 if offer.offer_type == SpecialOfferType.THREE_FOR_TWO and quantity_as_int > 2:
                     discount_amount = quantity * unit_price - (
